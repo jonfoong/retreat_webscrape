@@ -1,6 +1,6 @@
 library(rvest)
 library(webdriver)
-# install_phantomjs()
+#install_phantomjs()
 
 pjs_instance <- run_phantomjs()
 pjs_session <- Session$new(port = pjs_instance$port)
@@ -19,4 +19,17 @@ html_document <- read_html(rendered_source)
 
 html_document %>%
   html_elements("li") %>%
+  html_text()
+
+library(rvest)
+library(RSelenium)
+
+remDr <- rsDriver(browser = NULL)
+
+brow <- remDr[["client"]]
+brow$open()
+brow$navigate("https://www.filmweb.no/kinotoppen/")
+h <- brow$getPageSource()
+h <- read_html(h[[1]])
+h %>% html_nodes(".Kinotoppen_MovieTitle__2MFbT") %>%
   html_text()
