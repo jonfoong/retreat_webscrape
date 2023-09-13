@@ -1,0 +1,146 @@
+---
+title: "Headless browser scraping"
+format: html
+---
+
+
+```{r}
+library(rvest)
+library(dplyr)
+library(webdriver)
+library(ggplot2)
+library(stringr)
+
+```
+
+
+```{r}
+
+pjs <- run_phantomjs()
+
+ses <- Session$new(port = pjs$port)
+
+url <- "https://convention2.allacademic.com/one/apsa/apsa23/index.php?cmd=Online+Program+View+Selected+Session+Type+Submissions&selected_session_type_id=11476&program_focus=browse_by_session_type_submissions&PHPSESSID=f61sfq1tti3bp1kl0uk1bg5q80"
+
+ses$go(url)
+
+ses$takeScreenshot()
+
+```
+
+
+```{r}
+
+timezone <- ses$findElement('#new_timezone > option:nth-child(318)')
+
+timezone$click()
+
+ses$takeScreenshot()
+
+```
+
+
+```{r}
+
+set_timezone <- ses$findElement("#new_timezone_selected")
+
+set_timezone$click()
+
+ses$takeScreenshot()
+
+```
+
+```{r}
+
+click_sidebar <- ses$findElement('#left_panel_menu_column > ul:nth-child(1) > li:nth-child(8) > a')
+
+click_sidebar$click()
+
+ses$takeScreenshot()
+
+```
+
+```{r}
+
+click_sidebar <- ses$findElement("#home > div.ui-panel-wrapper > div.ui-content.ui-body-a > div.undefined > div > ul > li:nth-child(4) > a")
+
+click_sidebar$click()
+
+# this takes awhile so we skip
+
+#ses$takeScreenshot()
+
+```
+
+Extract html
+
+```{r}
+
+src <- ses$getSource()
+
+# end session
+
+ses$delete()
+
+sessions <- src %>% 
+  read_html() %>% 
+  html_elements(xpath = "//a[@class='ul-li-has-alt-left ui-btn ui-btn-icon-right ui-icon-carat-r']") %>% 
+  html_text()
+
+head(sessions)
+
+```
+
+Now we can parse this into a structure we can work with
+
+```{r}
+
+sessions_df <- 
+  data.frame(text = sessions) %>% 
+  mutate(title = str_extract(text,
+                             "(?<=Virtual \\d{1,2})([A-Z].*?)(?=Sub Unit\\:)|(?<=LACC, )(.*?)(?=Sub Unit\\:)") %>% 
+           str_remove("\\d+([A-Z](?=[A-Z]|\\())?") %>% 
+           str_remove("Petree Hall [A-Z]"),
+         sub_unit = str_extract(text,
+                                "(?<=Sub Unit\\: )(.*?)(?=Session Submission)") %>% 
+           str_remove("Division \\d{1,2}\\: "),
+         virtual = ifelse(grepl("Virtual", text), 1, 0)) %>% 
+  select(-text) 
+
+# we extract the top 10 sub units
+
+subunit <- sessions_df %>% 
+  group_by(sub_unit) %>% 
+  summarise(n = n()) %>% 
+  arrange(desc(n)) %>% 
+  slice(1:20) %>% 
+  .$sub_unit
+
+sessions_df %>% 
+  filter(sub_unit %in% subunit) %>% 
+  group_by(sub_unit) %>% 
+  summarise(prop_virtual = mean(virtual), n_sessions= n()) %>% 
+  arrange(desc(prop_virtual)) %>% 
+  kable(digits = 3)
+
+```
+
+We can also plot distribution
+
+```{r}
+
+sessions_df %>% 
+  group_by(sub_unit) %>% 
+  summarise(prop_virtual = mean(virtual), 
+            n_sessions= n()) %>% 
+  ggplot(aes(x = prop_virtual, y = after_stat(count)/sum(after_stat(count)))) +
+  #geom_density(outline.type = "full") +
+  geom_histogram(bins = 10, position = "dodge") +
+  scale_x_continuous(breaks = seq(0, 1, 0.1)) +
+  ggtitle("Proportion of sub-unit in virtual sessions") +
+  theme_minimal() +
+  ylab("Proportion")
+  
+
+
+```

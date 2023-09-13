@@ -1,0 +1,84 @@
+---
+title: "Basic Javscript scraping"
+format: html
+---
+
+For JS scraping we no longer need `rvest`. Instead we will rely on `httr` and `jsonlite` to make requests and extract JSON content.
+
+```{r}
+library(dplyr)
+library(kableExtra)
+library(httr)
+library(jsonlite)
+library(anytime) # to convert time from epochs
+
+```
+
+Once you have identified the JSON file from the network requests, extract the content and inspect the structure to identify where the information lies.
+
+We are interested in flights leaving Berlin in real time - where are these flights going to? We make use of real time flight data from flightradar24.
+
+
+```{r}
+
+# first set user agent
+
+
+
+
+# grab JSON url
+
+url <- "https://api.flightradar24.com/common/v1/airport.json?code=BER&plugin[]=schedule&plugin-setting[schedule][mode]=departures&plugin-setting[schedule][timestamp]=1694521228&limit=100&page=1"
+
+# make a request to the url
+
+response <- GET(url)
+
+# extract content from the request
+
+content <- content(response)
+
+# now convert it into text from JSON
+
+data <- fromJSON(content(response, as = "text"))
+
+# parse out the df from JSON structure
+
+df <- data$result$response$airport$pluginData$schedule$departures$data 
+
+flights_df <- lapply(1:nrow(df), function(x){
+  
+  model <- df[x,] %>% 
+    .$aircraft %>% 
+    .$model
+  
+  airline <- df[x,] %>% 
+    .$airline %>% 
+    .$name
+  
+  status <- df[x,] %>% 
+    .$status %>% 
+    select(`estimated departure` = text)
+  
+  scheduled <- df[x,] %>% 
+    .$time %>% 
+    .$scheduled
+  
+  destination <- df[x,] %>% 
+    .$airport %>% 
+    .$destination %>% 
+    .$name
+  
+  cbind(model, airline, status, scheduled, destination) %>% 
+    mutate(across(c(departure, arrival), function(x) anytime(x)))
+  
+}) %>% 
+  bind_rows()
+
+# now show in table form
+
+flights_df %>% 
+  head(20) %>% 
+  kable()
+  
+```

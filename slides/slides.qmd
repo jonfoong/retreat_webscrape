@@ -1,0 +1,157 @@
+---
+title: "IPI retreat 2023: A quick primer on webscraping in R"
+author: Jonah Foong
+date: "22 September 2023"
+format: 
+  revealjs:
+    reference-location: document
+    scrollable: true
+    embed-resources: true
+    theme: moon
+    background-interactive: true
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r}
+#| include: false
+
+library(dplyr)
+library(Rinteract)
+library(kableExtra)
+library(DeclareDesign)
+library(ggplot2)
+
+```
+
+
+## Overview
+
+1. Webscraping and its applications to research
+2. Some basics about web pages
+3. Webscraping ethics
+4. Scraping HTML and JS hands on
+5. Concluding thoughts
+
+## What is webscraping
+
+- Parsing information from web pages using a script, some level of automation
+- Typically unstructured
+- Is different to pulling from an API
+
+Ultimately, pulling information that is **raw and unstructured**, and turning it into usable, structured information!
+
+## Applications to research 
+
+
+
+
+## How are web pages structured?
+
+1. Pure HTML (static pages)
+2. Javscript content (dynamic pages)
+3. Javascript rendered HTML (static pages rendered dynamically!)
+
+::: {.panel-tabset}
+
+### HTML
+
+- Information you want can be found in source code
+
+
+### Javscript
+
+- Information you want cannot be found in source code
+
+
+:::
+
+# Let's get scraping!
+
+## Ethics
+
+- Check permissions from robots.txt
+  - Most websites will have one
+- Allowable user agents
+- Respecting rate limits
+  - Usually in the hundreds to thousands per hour
+
+- [Example one- wikipedia](https://en.wikipedia.org/robots.txt){target="_blank"}
+- [Example two - twitter](https://twitter.com/robots.txt){target="_blank"}
+
+
+## Scraping an HTML page (example 1)
+
+- Let's try scraping Wikipedia since it has a very liberal policy
+- We are interested in the list of [highest grossing sci-fi films of all time](https://en.wikipedia.org/wiki/List_of_highest-grossing_science_fiction_films)
+- Our workhorse package for this is `rvest`
+- We first set our user agent to identify ourselves
+
+## Scraping an HTML page (example 2)
+
+- What if the data we want is not in tabular form?
+- Say we want all news headlines on a website
+- We need a little more dexterity and will have to specify our desired xpath
+- xpath syntax is `//tagname[@attribute='value']`
+  - These things are hard to remember; there are online tools for this and also chatgpt
+
+## Now do it yourself! (10mins)
+
+0. Define user agent
+1. Think of a simple website to scrape
+2. Check the robots.txt page
+3. Extract the xpath or css selector for the element you want to scrape (right click + inspect)
+4. Put the information into rvest and voila!
+5. Repeat 1-4 
+
+## Scraping Javscript rendered pages
+
+- HTML is easy, but JS is tricky and R has weak libraries for this
+- Thankfully there are workarounds for this
+- Recall that JS pages are rendered only when we interact with it in some way
+- We will look at real time flight information from [flightradar24](https://www.flightradar24.com/) as an example
+- Also useful to check if an API for a use case already exists
+
+## Scraping Javscript rendered pages (key steps)
+
+1. Open up developer tools and go to network tab
+2. Go the the "Fetch/XHR" tab underneath it
+3. Reload the page and let requests populate
+  - These are all the AJAX requests that a page sends in the background
+4. Identify the one you need, typically in JSON format
+5. Extract info!
+
+## Now do it yourself! (10-15 mins)
+
+- Continue with flightradar24 but look for arrival information for a different city
+
+## Scraping Javascript rendered HTML
+
+1. The page looks static and info is in source code, but cannot be scraped
+2. Non-interactive so there is no AJAX request sent
+3. We can deal with this using a **headless browser**
+4. Headless browsers mimic functionality of a real browser except it works in the background
+5. They allow page html to load first
+
+## Headless browsing
+
+- We use the `webdriver` package for this which runs on phantomJS (a headless browser)
+- We navigate the website using CSS/xpath selectors, very similar to how we did HTML scraping
+- The [APSA website](https://convention2.allacademic.com/one/apsa/apsa23/index.php) is a good example: we want to know which sessions went virtual
+
+
+## Concluding thoughts
+
+- Websites can be organized in tons of other ways, web structures constantly evolving
+- Webscraping is specific to use case
+- R has poor libraries but enough for most basic uses
+- next steps: automate your scraper ([tutorial](https://jonfoong.github.io/writings/rscrapergcp/))
+
+
+
+
+
+
+
+

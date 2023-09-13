@@ -1,0 +1,94 @@
+---
+title: "Basic HTML scraping"
+format: html
+---
+
+Load all libraries needed for later, if not install
+
+```{r}
+
+packages <- c("rvest", "dplyr", "kableExtra", "ggplot2",
+              "webdriver", "httr", "stringr", "anytime",
+              "jsonlite")
+
+# install.packages(packages) uncomment and install if need be
+
+library(rvest)
+library(dplyr)
+library(kableExtra)
+
+```
+
+```{r}
+
+# grab url
+
+url <- "https://en.wikipedia.org/wiki/List_of_highest-grossing_science_fiction_films"
+
+# find css/xpath
+
+selector <- "#mw-content-text > div.mw-parser-output > table:nth-child(6)"
+
+# first read HTML
+
+raw_html <- url %>% 
+  read_html() 
+
+# now extract the element
+
+tbl_html <- raw_html %>% 
+  html_element(selector) 
+
+# we can convert this into a table
+tbl <- tbl_html %>% 
+  html_table()
+
+tbl %>% head(10) %>% 
+  kable()
+
+```
+
+We can also use an xpath instead of css selector.
+
+```{r}
+
+xpath <- '//*[@id="mw-content-text"]/div[1]/table[1]'
+
+raw_html %>% 
+  html_element(xpath = xpath) %>% 
+  html_table() %>% 
+  head(10) %>% 
+  kable()
+
+```
+
+Let's try scraping headlines from a news website. 
+
+The xpath syntax is `//tagname[@attribute='value']`
+
+```{r}
+
+# fox news
+
+url <- "https://www.foxnews.com/"
+
+raw_html <- url %>% 
+  read_html()
+
+raw_html %>% 
+  html_elements(xpath = "//h3[@class='title']") %>% 
+  html_text()
+
+# bbc
+
+url <- "https://www.bbc.com/news"
+
+raw_html <- url %>% 
+  read_html()
+
+raw_html %>% 
+  html_elements(xpath = "//a[@class='gs-c-promo-heading gs-o-faux-block-link__overlay-link gel-pica-bold nw-o-link-split__anchor']") %>% 
+  html_text()
+
+
+```
