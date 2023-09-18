@@ -1177,6 +1177,15 @@ Jonah Foong
 </section>
 <section id="applications-to-research" class="slide level2">
 <h2>Applications to research</h2>
+<ul>
+<li>how do people behave online? Massive amounts of textual data on forums/SM</li>
+<li>placing politicians on a spectrum - parliamentary speech data</li>
+<li>where do news organizations lean - headlines and articles</li>
+<li>making data accessible via dashboards - data is “open” but not really
+<ul>
+<li>how do countries vote at UNGA, etc</li>
+</ul></li>
+</ul>
 </section>
 <section id="how-are-web-pages-structured" class="slide level2">
 <h2>How are web pages structured?</h2>
@@ -1185,21 +1194,12 @@ Jonah Foong
 <li>Javscript content (dynamic pages)</li>
 <li>Javascript rendered HTML (static pages rendered dynamically!)</li>
 </ol>
-<div class="panel-tabset">
-<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default href="#tabset-1-1">HTML</a></li><li><a href="#tabset-1-2">Javscript</a></li></ul>
-<div class="tab-content">
-<div id="tabset-1-1">
-<ul>
-<li>Information you want can be found in source code</li>
-</ul>
-</div>
-<div id="tabset-1-2">
-<ul>
-<li>Information you want cannot be found in source code</li>
-</ul>
-</div>
-</div>
-</div>
+<!-- ::: {.panel-tabset} -->
+<!-- ### HTML -->
+<!-- - Information you want can be found in source code -->
+<!-- ### Javscript -->
+<!-- - Information you want cannot be found in source code -->
+<!-- ::: -->
 </section>
 <section>
 <section id="lets-get-scraping" class="title-slide slide level1 center">
@@ -1268,7 +1268,7 @@ Jonah Foong
 <h2>Scraping Javscript rendered pages (key steps)</h2>
 <ol type="1">
 <li>Open up developer tools and go to network tab</li>
-<li>Go the the “Fetch/XHR” tab underneath it</li>
+<li>Go the the <code>Fetch/XHR</code> tab underneath it</li>
 <li>Reload the page and let requests populate</li>
 </ol>
 <ul>
@@ -1290,7 +1290,7 @@ Jonah Foong
 <ol type="1">
 <li>The page looks static and info is in source code, but cannot be scraped</li>
 <li>Non-interactive so there is no AJAX request sent</li>
-<li>We can deal with this using a <strong>headless browser</strong></li>
+<li>We can deal with this using a <code>headless browser</code></li>
 <li>Headless browsers mimic functionality of a real browser except it works in the background</li>
 <li>They allow page html to load first</li>
 </ol>
@@ -2344,44 +2344,6 @@ window.QuartoSupport = function () {
         ]
       });
     </script>
-    
-    <script>
-      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
-      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
-      // slide changes (different for each slide format).
-      (function () {
-        // dispatch for htmlwidgets
-        function fireSlideEnter() {
-          const event = window.document.createEvent("Event");
-          event.initEvent("slideenter", true, true);
-          window.document.dispatchEvent(event);
-        }
-
-        function fireSlideChanged(previousSlide, currentSlide) {
-          fireSlideEnter();
-
-          // dispatch for shiny
-          if (window.jQuery) {
-            if (previousSlide) {
-              window.jQuery(previousSlide).trigger("hidden");
-            }
-            if (currentSlide) {
-              window.jQuery(currentSlide).trigger("shown");
-            }
-          }
-        }
-
-        // hookup for slidy
-        if (window.w3c_slidy) {
-          window.w3c_slidy.add_observer(function (slide_num) {
-            // slide_num starts at position 1
-            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
-          });
-        }
-
-      })();
-    </script>
-
     <script id="quarto-html-after-body" type="application/javascript">
     window.document.addEventListener("DOMContentLoaded", function (event) {
       const toggleBodyColorMode = (bsSheetEl) => {

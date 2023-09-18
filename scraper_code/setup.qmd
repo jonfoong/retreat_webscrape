@@ -1,0 +1,25 @@
+---
+title: "setup"
+format: html
+---
+
+Set up by installing packages
+
+```{r}
+
+packages <- c("rvest", "dplyr", "kableExtra", "ggplot2",
+              "webdriver", "httr", "stringr", "lubridate",
+              "jsonlite")
+
+install.packages(packages)
+
+
+```
+
+Now we install phantomjs. Let me know if you do not have admin permissions and cannot install
+
+```{r}
+
+webdriver::install_phantomjs()
+
+```

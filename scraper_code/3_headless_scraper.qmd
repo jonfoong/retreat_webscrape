@@ -5,16 +5,20 @@ format: html
 
 
 ```{r}
+
 library(rvest)
 library(dplyr)
 library(webdriver)
 library(ggplot2)
 library(stringr)
+library(kableExtra)
 
 ```
 
 
 ```{r}
+
+#setwd("phantomjs/bin")
 
 pjs <- run_phantomjs()
 
@@ -140,7 +144,5 @@ sessions_df %>%
   ggtitle("Proportion of sub-unit in virtual sessions") +
   theme_minimal() +
   ylab("Proportion")
-  
-
 
 ```

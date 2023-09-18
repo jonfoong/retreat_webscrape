@@ -14,18 +14,6 @@ editor:
     wrap: 72
 ---
 
-```{r}
-#| include: false
-
-library(dplyr)
-library(Rinteract)
-library(kableExtra)
-library(DeclareDesign)
-library(ggplot2)
-
-```
-
-
 ## Overview
 
 1. Webscraping and its applications to research
@@ -44,8 +32,11 @@ Ultimately, pulling information that is **raw and unstructured**, and turning it
 
 ## Applications to research 
 
-
-
+- how do people behave online? Massive amounts of textual data on forums/SM
+- placing politicians on a spectrum - parliamentary speech data
+- where do news organizations lean - headlines and articles
+- making data accessible via dashboards - data is "open" but not really
+  - how do countries vote at UNGA, etc
 
 ## How are web pages structured?
 
@@ -53,19 +44,19 @@ Ultimately, pulling information that is **raw and unstructured**, and turning it
 2. Javscript content (dynamic pages)
 3. Javascript rendered HTML (static pages rendered dynamically!)
 
-::: {.panel-tabset}
+<!-- ::: {.panel-tabset} -->
 
-### HTML
+<!-- ### HTML -->
 
-- Information you want can be found in source code
-
-
-### Javscript
-
-- Information you want cannot be found in source code
+<!-- - Information you want can be found in source code -->
 
 
-:::
+<!-- ### Javscript -->
+
+<!-- - Information you want cannot be found in source code -->
+
+
+<!-- ::: -->
 
 # Let's get scraping!
 
@@ -116,7 +107,7 @@ Ultimately, pulling information that is **raw and unstructured**, and turning it
 ## Scraping Javscript rendered pages (key steps)
 
 1. Open up developer tools and go to network tab
-2. Go the the "Fetch/XHR" tab underneath it
+2. Go the the `Fetch/XHR` tab underneath it
 3. Reload the page and let requests populate
   - These are all the AJAX requests that a page sends in the background
 4. Identify the one you need, typically in JSON format
@@ -130,7 +121,7 @@ Ultimately, pulling information that is **raw and unstructured**, and turning it
 
 1. The page looks static and info is in source code, but cannot be scraped
 2. Non-interactive so there is no AJAX request sent
-3. We can deal with this using a **headless browser**
+3. We can deal with this using a `headless browser`
 4. Headless browsers mimic functionality of a real browser except it works in the background
 5. They allow page html to load first
 

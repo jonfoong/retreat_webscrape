@@ -3,21 +3,31 @@ title: "Basic HTML scraping"
 format: html
 ---
 
-Load all libraries needed for later, if not install
-
 ```{r}
-
-packages <- c("rvest", "dplyr", "kableExtra", "ggplot2",
-              "webdriver", "httr", "stringr", "anytime",
-              "jsonlite")
-
-# install.packages(packages) uncomment and install if need be
 
 library(rvest)
 library(dplyr)
 library(kableExtra)
 
 ```
+
+First we set our user agent. The user agent tells the server what device you are viewing from, your browser, computer OS, etc. We want to specify this to simulate the behavior of a typical web user.
+
+```{r}
+
+ua <- "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+
+httr::set_config(httr::user_agent(ua))
+
+# we can check that our user agent has indeed been set
+
+se <- session("https://example.com")
+
+se$response$request$options$useragent
+
+```
+
+Now let's try scraping a table from wikipedia using a CSS selector
 
 ```{r}
 
@@ -48,7 +58,7 @@ tbl %>% head(10) %>%
 
 ```
 
-We can also use an xpath instead of css selector.
+We can also use an xpath instead of css selector. If a web page is a document, an xpath is akin to a file directory and specifies which part of the "document" to look into.
 
 ```{r}
 
@@ -62,7 +72,7 @@ raw_html %>%
 
 ```
 
-Let's try scraping headlines from a news website. 
+Let's try scraping headlines from a news website. Here we use xpath because it is more flexible and allows us to select all elements of a certain class.
 
 The xpath syntax is `//tagname[@attribute='value']`
 

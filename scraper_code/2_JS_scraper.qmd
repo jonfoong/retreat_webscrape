@@ -10,7 +10,7 @@ library(dplyr)
 library(kableExtra)
 library(httr)
 library(jsonlite)
-library(anytime) # to convert time from epochs
+library(lubridate)
 
 ```
 
@@ -19,16 +19,44 @@ Once you have identified the JSON file from the network requests, extract the co
 We are interested in flights leaving Berlin in real time - where are these flights going to? We make use of real time flight data from flightradar24.
 
 
+Again we first set our user agent.
+
 ```{r}
 
 # first set user agent
 
+ua <- "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+
+httr::set_config(httr::user_agent(ua))
+
+```
+
+We then need to identify the JSON file that the server is requesting when it loads the page. Go to developer tools by right clicking the page and clicking inspect, then go to the network tab -> Fetch/XHR and there we will see a list of JSON files. Look through them one by one until you identify the one that contains the information we need.
 
 
+```{r}
 
 # grab JSON url
 
-url <- "https://api.flightradar24.com/common/v1/airport.json?code=BER&plugin[]=schedule&plugin-setting[schedule][mode]=departures&plugin-setting[schedule][timestamp]=1694521228&limit=100&page=1"
+url <- "https://api.flightradar24.com/common/v1/airport.json?code=BER&plugin[]=schedule&plugin-setting[schedule][mode]=departures&plugin-setting[schedule][timestamp]=1695036655&limit=100&page=1"
+
+```
+
+Note that links may not be perpetual, and we cannot scrape info for times and dates that have passed. We can sub in the seconds since epoch into the url instead
+
+```{r}
+
+current_time <- as.numeric(as.POSIXct(Sys.time(), origin = "1970-01-01"))
+
+url <- sprintf("https://api.flightradar24.com/common/v1/airport.json?code=BER&plugin[]=schedule&plugin-setting[schedule][mode]=departures&plugin-setting[schedule][timestamp]=%.0f&limit=100&page=1", current_time)
+
+
+```
+
+
+Now we will go ahead and make a request to that URL that we identified
+
+```{r}
 
 # make a request to the url
 
@@ -41,6 +69,13 @@ content <- content(response)
 # now convert it into text from JSON
 
 data <- fromJSON(content(response, as = "text"))
+
+```
+
+Once we have the data, we need to extract the information by examining the structure of the JSON and seeing where the information lies. We can do this by looking at the preview tab beside the response tab
+
+
+```{r}
 
 # parse out the df from JSON structure
 
@@ -70,7 +105,7 @@ flights_df <- lapply(1:nrow(df), function(x){
     .$name
   
   cbind(model, airline, status, scheduled, destination) %>% 
-    mutate(across(c(departure, arrival), function(x) anytime(x)))
+    mutate(across(c(departure, arrival), function(x) as.POSIXct(x, origin = "1970-01-01")))
   
 }) %>% 
   bind_rows()
