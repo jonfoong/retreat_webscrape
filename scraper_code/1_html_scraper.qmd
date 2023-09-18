@@ -37,7 +37,7 @@ url <- "https://en.wikipedia.org/wiki/List_of_highest-grossing_science_fiction_f
 
 # find css/xpath
 
-selector <- "#mw-content-text > div.mw-parser-output > table:nth-child(6)"
+selector <- ""
 
 # first read HTML
 
@@ -62,7 +62,7 @@ We can also use an xpath instead of css selector. If a web page is a document, a
 
 ```{r}
 
-xpath <- '//*[@id="mw-content-text"]/div[1]/table[1]'
+xpath <- ''
 
 raw_html %>% 
   html_element(xpath = xpath) %>% 
@@ -86,7 +86,7 @@ raw_html <- url %>%
   read_html()
 
 raw_html %>% 
-  html_elements(xpath = "//h3[@class='title']") %>% 
+  html_elements(xpath = "") %>% 
   html_text()
 
 # bbc
@@ -97,7 +97,7 @@ raw_html <- url %>%
   read_html()
 
 raw_html %>% 
-  html_elements(xpath = "//a[@class='gs-c-promo-heading gs-o-faux-block-link__overlay-link gel-pica-bold nw-o-link-split__anchor']") %>% 
+  html_elements(xpath = "") %>% 
   html_text()
 
 

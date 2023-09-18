@@ -35,7 +35,7 @@ ses$takeScreenshot()
 
 ```{r}
 
-timezone <- ses$findElement('#new_timezone > option:nth-child(318)')
+timezone <- ses$findElement('')
 
 timezone$click()
 
@@ -46,7 +46,7 @@ ses$takeScreenshot()
 
 ```{r}
 
-set_timezone <- ses$findElement("#new_timezone_selected")
+set_timezone <- ses$findElement("")
 
 set_timezone$click()
 
@@ -56,7 +56,7 @@ ses$takeScreenshot()
 
 ```{r}
 
-click_sidebar <- ses$findElement('#left_panel_menu_column > ul:nth-child(1) > li:nth-child(8) > a')
+click_sidebar <- ses$findElement('')
 
 click_sidebar$click()
 
@@ -66,7 +66,7 @@ ses$takeScreenshot()
 
 ```{r}
 
-click_sidebar <- ses$findElement("#home > div.ui-panel-wrapper > div.ui-content.ui-body-a > div.undefined > div > ul > li:nth-child(4) > a")
+click_sidebar <- ses$findElement("")
 
 click_sidebar$click()
 
@@ -88,7 +88,7 @@ ses$delete()
 
 sessions <- src %>% 
   read_html() %>% 
-  html_elements(xpath = "//a[@class='ul-li-has-alt-left ui-btn ui-btn-icon-right ui-icon-carat-r']") %>% 
+  html_elements(xpath = "") %>% 
   html_text()
 
 head(sessions)
