@@ -15,11 +15,13 @@ library(kableExtra)
 
 ```
 
-We can first try scraping with `rvest` and see what happens
+We are interested in scraping information from 2023 APSA panels, specifically which panels were virtual and which were not. 
+
+We can first try scraping with `rvest` and see what happens. 
 
 ```{r}
 
-url <- "https://convention2.allacademic.com/one/apsa/apsa23/index.php?cmd=Online+Program+View+Selected+Session+Type+Submissions&selected_session_type_id=11507&program_focus=browse_by_session_type_submissions&PHPSESSID=s3mgj7huq5dqua1k1j40fvqo35"
+url <- "https://convention2.allacademic.com/one/apsa/apsa23/index.php?cmd=Online+Program+View+Selected+Session+Type+Submissions&selected_session_type_id=11507&program_focus=browse_by_session_type_submissions&PHPSESSID=qmnc9o16lkvr4lule02rcp99r3"
 
 raw_html <- read_html(url)
 
@@ -32,6 +34,8 @@ raw_html %>%
 ```
 
 Because the html is only loaded after the page is loaded, we can mimic this browser behaviour by using a headless browser. Essentially we allow the page to load first and then extract the html.
+
+We use phantomjs as our headless browser and "click" our way through to the page we want using xpaths. Along the way we can view our progress by tasking the browser with taking a screenshot for us.
 
 ```{r}
 
@@ -93,7 +97,7 @@ ses$takeScreenshot()
 
 ```
 
-Extract html
+Now that our page is loaded, we want to extract the html that was produced. After that we do the same as we would with any HTML input.
 
 ```{r}
 
@@ -112,7 +116,7 @@ head(sessions)
 
 ```
 
-Now we can parse this into a structure we can work with
+Now we can parse this into a structure we can work with. We want to know which sub units were more likely to hold virtual sessions
 
 ```{r}
 
@@ -173,3 +177,11 @@ sessions_df %>%
   ylab("Proportion")
 
 ```
+
+Now do it yourself! (10 mins)
+
+1. Try extracting all titles and sub units of another panel using the same approach, just extract the data don't need to parse or restructure
+
+    - Note that taking screenshots is slow, you might want to skip that
+2. Once done, try with another one
+

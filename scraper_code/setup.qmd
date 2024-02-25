@@ -16,10 +16,11 @@ install.packages(packages)
 
 ```
 
-Now we install phantomjs. Let me know if you do not have admin permissions and cannot install
+Now we install phantomjs
 
 ```{r}
 
 webdriver::install_phantomjs()
 
 ```
+

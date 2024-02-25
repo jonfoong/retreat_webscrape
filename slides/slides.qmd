@@ -1,5 +1,5 @@
 ---
-title: "IPI mini webscraping workshop 2024: A quick primer on webscraping in R"
+title: "IPI webscraping workshop 2024: A quick primer on webscraping in R"
 author: Jonah Foong
 date: "22 September 2023"
 format: 
@@ -20,10 +20,7 @@ editor:
 2. Some basics about web pages
 3. Webscraping ethics
 4. Scraping HTML and JS hands on
-5. Automating our webscraper using containers and the cloud*
-6. Next steps
-
-* If we have time
+5. Next steps/concluding thoughts
 
 ## What is webscraping
 
@@ -55,12 +52,12 @@ Usually organized in 3 ways:
 
 ### Some important terminology
 
-*CSS selector:*
+**CSS selector:**
 
     - CSS stands for Cascading Style Sheets, controls the styling (font, color, etc) of a website
     - Each element in a website has an ID tagged to it that allows customized styling of that element in the website - this is the CSS selector
     
-*xpath:* 
+**Xpath:**
 
     - Think of a web page as a folder, and pieces of information within a web page are files or sub folders within that folder
     - If a web page takes a folder structure, then paths must exist to the information within
@@ -107,7 +104,7 @@ Usually organized in 3 ways:
 - xpath syntax is `//tagname[@attribute='value']`
   - These things are hard to remember; there are online tools for this and also chatgpt
 
-## Scraping Javscript rendered pages
+## Scraping Javscript rendered pages {.smaller}
 
 - Recall that JS pages are rendered only when we interact with it in some way
 - The website sends a request to the server to retrieve information, this info is then loaded onto the page
@@ -127,10 +124,12 @@ Usually organized in 3 ways:
 4. Identify the one you need, typically in JSON format
 5. Extract info!
 
-## Scraping Javascript rendered HTML
+## Scraping Javascript rendered HTML {.smaller}
 
-1. The page looks static and info is in source code, but cannot be scraped
-2. Non-interactive so there is no AJAX request sent
+1. Sometimes HTML pages can be rendered by JS - on the surface the page looks static and info is in source code, but cannot be scraped using `rvest`
+
+    - The HTML only appears **after** the page is completely loaded
+2. Non-interactive so there is no request sent
 3. We can deal with this using a `headless browser`
 4. Headless browsers mimic functionality of a real browser except it works in the background
 5. They allow page html to load first
@@ -142,12 +141,14 @@ Usually organized in 3 ways:
 - The [APSA website](https://convention2.allacademic.com/one/apsa/apsa23/index.php) is a good example: we want to know which sessions went virtual
 
 
-## Concluding thoughts
+## Next steps/concluding thoughts
 
 - Websites can be organized in tons of other ways, web structures constantly evolving
 - Webscraping is specific to use case
 - R has poor libraries but enough for most basic uses
-- next steps: automate your scraper ([tutorial](https://jonfoong.github.io/writings/rscrapergcp/))
+  
+    - Python has a well maintained selenium library
+- next steps: automate your scraper on the cloud ([tutorial](https://jonfoong.github.io/writings/rscrapergcp/))
 
 
 
