@@ -1,5 +1,5 @@
 ---
-title: "IPI retreat 2023: A quick primer on webscraping in R"
+title: "IPI mini webscraping workshop 2024: A quick primer on webscraping in R"
 author: Jonah Foong
 date: "22 September 2023"
 format: 
@@ -20,11 +20,17 @@ editor:
 2. Some basics about web pages
 3. Webscraping ethics
 4. Scraping HTML and JS hands on
-5. Concluding thoughts
+5. Automating our webscraper using containers and the cloud*
+6. Next steps
+
+* If we have time
 
 ## What is webscraping
 
 - Parsing information from web pages using a script, some level of automation
+
+    - pulling rent prices of all apartments on immoscout
+    - email addresses of university staff
 - Typically unstructured
 - Is different to pulling from an API
 
@@ -33,16 +39,31 @@ Ultimately, pulling information that is **raw and unstructured**, and turning it
 ## Applications to research 
 
 - how do people behave online? Massive amounts of textual data on forums/SM
-- placing politicians on a spectrum - parliamentary speech data
+- analysing parliamentary speech data
 - where do news organizations lean - headlines and articles
-- making data accessible via dashboards - data is "open" but not really
-  - how do countries vote at UNGA, etc
+- voting records at the UNGA
+- making data accessible via dashboards
 
-## How are web pages structured?
+## How are websites organized?
 
-1. Pure HTML (static pages)
-2. Javscript content (dynamic pages)
-3. Javascript rendered HTML (static pages rendered dynamically!)
+Usually organized in 3 ways:
+  1. Pure HTML (static pages)
+  2. Javscript content (dynamic pages)
+  3. Javascript rendered HTML (static pages rendered dynamically!)
+
+## How are websites organized?
+
+### Some important terminology
+
+*CSS selector:*
+
+    - CSS stands for Cascading Style Sheets, controls the styling (font, color, etc) of a website
+    - Each element in a website has an ID tagged to it that allows customized styling of that element in the website - this is the CSS selector
+    
+*xpath:* 
+
+    - Think of a web page as a folder, and pieces of information within a web page are files or sub folders within that folder
+    - If a web page takes a folder structure, then paths must exist to the information within
 
 <!-- ::: {.panel-tabset} -->
 
@@ -62,15 +83,14 @@ Ultimately, pulling information that is **raw and unstructured**, and turning it
 
 ## Ethics
 
-- Check permissions from robots.txt
-  - Most websites will have one
-- Allowable user agents
-- Respecting rate limits
+- Do we have permission from the web host? 
+  - Most websites will have a `robots.txt` file in the root directory we can check
+- Allowable user agents: who is allowed to scrape?
+- Respecting rate limits: how often is one allowed to scrape?
   - Usually in the hundreds to thousands per hour
 
 - [Example one- wikipedia](https://en.wikipedia.org/robots.txt){target="_blank"}
 - [Example two - twitter](https://twitter.com/robots.txt){target="_blank"}
-
 
 ## Scraping an HTML page (example 1)
 
@@ -87,21 +107,15 @@ Ultimately, pulling information that is **raw and unstructured**, and turning it
 - xpath syntax is `//tagname[@attribute='value']`
   - These things are hard to remember; there are online tools for this and also chatgpt
 
-## Now do it yourself! (10mins)
-
-0. Define user agent
-1. Think of a simple website to scrape
-2. Check the robots.txt page
-3. Extract the xpath or css selector for the element you want to scrape (right click + inspect)
-4. Put the information into rvest and voila!
-5. Repeat 1-4 
-
 ## Scraping Javscript rendered pages
 
-- HTML is easy, but JS is tricky and R has weak libraries for this
-- Thankfully there are workarounds for this
 - Recall that JS pages are rendered only when we interact with it in some way
-- We will look at real time flight information from [flightradar24](https://www.flightradar24.com/) as an example
+- The website sends a request to the server to retrieve information, this info is then loaded onto the page
+- Two kinds of requests, GET (request contained in URL) and POST (request contained in body)
+- We will look at two examples
+
+    - real time flight information from [flightradar24](https://www.flightradar24.com/)
+    - topics and sitting dates of Singapore parliamentary speeches
 - Also useful to check if an API for a use case already exists
 
 ## Scraping Javscript rendered pages (key steps)
@@ -109,13 +123,9 @@ Ultimately, pulling information that is **raw and unstructured**, and turning it
 1. Open up developer tools and go to network tab
 2. Go the the `Fetch/XHR` tab underneath it
 3. Reload the page and let requests populate
-  - These are all the AJAX requests that a page sends in the background
+  - These are all the requests that a page sends in the background
 4. Identify the one you need, typically in JSON format
 5. Extract info!
-
-## Now do it yourself! (10-15 mins)
-
-- Continue with flightradar24 but look for arrival information for a different city
 
 ## Scraping Javascript rendered HTML
 

@@ -13,6 +13,8 @@ library(kableExtra)
 
 First we set our user agent. The user agent tells the server what device you are viewing from, your browser, computer OS, etc. We want to specify this to simulate the behavior of a typical web user.
 
+Useful list of user agents here: https://www.useragents.me/
+
 ```{r}
 
 ua <- "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
@@ -27,7 +29,7 @@ se$response$request$options$useragent
 
 ```
 
-Now let's try scraping a table from wikipedia using a CSS selector
+Now let's try scraping a table from wikipedia using a CSS selector.
 
 ```{r}
 
@@ -37,7 +39,7 @@ url <- "https://en.wikipedia.org/wiki/List_of_highest-grossing_science_fiction_f
 
 # find css/xpath
 
-selector <- ""
+selector <- "#mw-content-text > div.mw-content-ltr.mw-parser-output > table:nth-child(6)"
 
 # first read HTML
 
@@ -62,7 +64,7 @@ We can also use an xpath instead of css selector. If a web page is a document, a
 
 ```{r}
 
-xpath <- ''
+xpath <- '//*[@id="mw-content-text"]/div[1]/table[1]'
 
 raw_html %>% 
   html_element(xpath = xpath) %>% 
@@ -72,9 +74,45 @@ raw_html %>%
 
 ```
 
-Let's try scraping headlines from a news website. Here we use xpath because it is more flexible and allows us to select all elements of a certain class.
+Now we can try doing it together - suggest a wikipedia page with tables to query
+
+```{r}
+
+url <- ""
+
+# selector/xpath
+
+selector <- ""
+xpath <- ""
+
+raw_html <- url %>% 
+  read_html() 
+
+# now extract the element
+
+tbl_html <- raw_html %>% 
+  html_element() 
+
+# we can convert this into a table
+tbl <- tbl_html %>% 
+  html_table()
+
+tbl %>% head(10) %>% 
+  kable()
+
+
+```
+
+
+# Scraping multiple elements using xpath
+
+What if the data we want is not in tabular form? Say we want all news headlines on a website
+
+Here we use xpath because it is more flexible and allows us to select all elements of a certain class (think of it as selecting all files within a folder).
 
 The xpath syntax is `//tagname[@attribute='value']`
+
+We begin with scraping the fox news website:
 
 ```{r}
 
@@ -86,10 +124,17 @@ raw_html <- url %>%
   read_html()
 
 raw_html %>% 
-  html_elements(xpath = "") %>% 
+  html_elements(xpath = '//h3[@class="title"]') %>% 
   html_text()
 
+```
+
+Now let's try doing the BBC website together:
+
+```{r}
+
 # bbc
+
 
 url <- "https://www.bbc.com/news"
 
@@ -102,3 +147,12 @@ raw_html %>%
 
 
 ```
+
+Now do it yourself! (10 mins)
+
+0. Define user agent
+1. Think of a simple website to scrape
+2. Check the robots.txt page
+3. Extract the xpath or css selector for the element you want to scrape (right click + inspect)
+4. Put the information into rvest and voila!
+5. Repeat 1-4 

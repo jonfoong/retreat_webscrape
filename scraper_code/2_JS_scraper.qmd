@@ -6,6 +6,7 @@ format: html
 For JS scraping we no longer need `rvest`. Instead we will rely on `httr` and `jsonlite` to make requests and extract JSON content.
 
 ```{r}
+
 library(dplyr)
 library(kableExtra)
 library(httr)
@@ -14,9 +15,9 @@ library(lubridate)
 
 ```
 
-Once you have identified the JSON file from the network requests, extract the content and inspect the structure to identify where the information lies.
+# GET request
 
-We are interested in flights leaving Berlin in real time - where are these flights going to? We make use of real time flight data from flightradar24.
+We are interested in *flights leaving Berlin in real time* - where are these flights going to? We make use of real time flight data from flightradar24.
 
 
 Again we first set our user agent.
@@ -31,18 +32,38 @@ httr::set_config(httr::user_agent(ua))
 
 ```
 
-We then need to identify the JSON file that the server is requesting when it loads the page. Go to developer tools by right clicking the page and clicking inspect, then go to the network tab -> Fetch/XHR and there we will see a list of JSON files. Look through them one by one until you identify the one that contains the information we need.
+Just to be sure, we can try using a HTML approach and see what happens
+
+```{r}
+
+url <- "https://www.flightradar24.com/airport/ber/departures"
+
+xpath <- '//*[@id="app"]/div/div/div[3]/main/div/div/div/div[4]/main/div[2]/div'
+
+raw_html <- rvest::read_html(url)
+
+raw_html %>% 
+  html_element(xpath = xpath)
+
+```
+
+
+
+We need to identify the URL the server is requesting from when it loads the page. 
+Go to developer tools by right clicking the page and clicking inspect, then go to the network tab -> Fetch/XHR and click CTRL+R (this will reload the request). There we will see a list of entries. 
+
+Look through them one by one until you identify the one that contains the information we need.
 
 
 ```{r}
 
-# grab JSON url
+# grab url
 
-url <- "https://api.flightradar24.com/common/v1/airport.json?code=BER&plugin[]=schedule&plugin-setting[schedule][mode]=departures&plugin-setting[schedule][timestamp]=1695036655&limit=100&page=1"
+url <- "https://api.flightradar24.com/common/v1/airport.json?code=BER&plugin[]=schedule&plugin-setting[schedule][mode]=departures&plugin-setting[schedule][timestamp]=1708860586&limit=100&page=1"
 
 ```
 
-Note that links may not be perpetual, and we cannot scrape info for times and dates that have passed. We can sub in the seconds since epoch into the url instead
+Note that the link is not perpetual, and we cannot scrape info for times and dates that have passed. However the time information is conveyed within the URL. Requests where information is embedded into the URL is known as a GET request. To get the most recent information, we can sub in the seconds since epoch into the URL instead.
 
 ```{r}
 
@@ -55,6 +76,8 @@ url <- sprintf("https://api.flightradar24.com/common/v1/airport.json?code=BER&pl
 
 
 Now we will go ahead and make a request to that URL that we identified
+
+- Sometimes we use a GET, sometimes a POST request. Look at the headers to see what request the website sends and use the same.
 
 ```{r}
 
@@ -117,3 +140,102 @@ flights_df %>%
   kable()
   
 ```
+
+Now we can try doing it together - suggest a different airport and what information we should scrape
+
+```{r}
+
+url <- sprintf("", current_time)
+
+response <- GET(url)
+
+# extract content from the request
+
+content <- content(response)
+
+# now convert it into text from JSON
+
+data <- fromJSON(content(response, as = "text"))
+
+# now get info
+
+
+
+```
+
+# POST request
+
+Sometimes the query is not contained within the URL and we have to write the query ourselves. This is also known as a POST request. We will try sending a POST request to the Singapore parliamentary speeches database to query all parliamentary sitting dates.
+
+We do the same as before, except this time we inspect the request to see what fields need to be filled. The two main items we need to supply are 1) the headers (what our identifying information is) and 2) the payload (what data we require from the server).
+
+```{r}
+# what is our URL?
+
+url <- 'https://sprs.parl.gov.sg/search/searchResult'
+
+# what headers does the request accept?
+
+headers = c(
+    'Accept'= 'application/json, text/plain, */*',
+    'Accept-Encoding'= 'gzip, deflate, br',
+    'Accept-Language'= 'zh-SG,zh;q=0.9,en-GB;q=0.8,en;q=0.7,fr-FR;q=0.6,fr;q=0.5,en-US;q=0.4',
+    'Content-Type'= 'application/json',
+    'Origin'= 'https=//sprs.parl.gov.sg',
+    'Sec-Ch-Ua'= '"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"',
+    'Sec-Ch-Ua-Mobile'= '?0',
+    'Sec-Ch-Ua-Platform'= '"Windows"',
+    'Sec-Fetch-Dest'= 'empty',
+    'Sec-Fetch-Mode'= 'cors',
+    'Sec-Fetch-Site'= 'same-origin',
+    'User-Agent'= 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+)
+
+# define request parameters
+payload <- list(
+  keyword = "undefined",
+  fromday = "25",
+  frommonth = "02",
+  fromyear = "2024",
+  today = "25",
+  tomonth = "02",
+  toyear = "2024",
+  dateRange = "* TO NOW",
+  reportContent = "with all the words",
+  parliamentNo = "",
+  selectedSort = "date_dt desc",
+  startIndex = "0",
+  endIndex = "19",
+  titleChecked = "false",
+  footNoteChecked = "false",
+  lang = "",
+  mpName = "",
+  rsSelected = "",
+  ministrySelected = list(),
+  portfolio = list()
+)
+
+# we convert our payload to json format; it is important in R to set auto_unbox to TRUE
+
+payload_json <- toJSON(payload, auto_unbox = TRUE)
+
+# Send the POST request
+response <- POST(url, body = payload_json, encode = "json", 
+                 add_headers(headers))
+
+# extract content from the response
+content <- content(response, "text")
+
+# convert it to a dataframe
+df <- fromJSON(content)
+
+head(df) %>% 
+  kable()
+
+```
+
+Now do it yourself! (10 mins)
+
+1. Try to get all entries from the 14th parliament with titles that include the word "Gaza"
+2. Practice making another request with a different set of parameters or go back and try making a GET request with flightradar
+

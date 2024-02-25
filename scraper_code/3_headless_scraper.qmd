@@ -15,6 +15,23 @@ library(kableExtra)
 
 ```
 
+We can first try scraping with `rvest` and see what happens
+
+```{r}
+
+url <- "https://convention2.allacademic.com/one/apsa/apsa23/index.php?cmd=Online+Program+View+Selected+Session+Type+Submissions&selected_session_type_id=11507&program_focus=browse_by_session_type_submissions&PHPSESSID=s3mgj7huq5dqua1k1j40fvqo35"
+
+raw_html <- read_html(url)
+
+xpath <- '//*[@id="event_list"]/li[3]'
+
+raw_html %>% 
+  html_elements(xpath = xpath)
+
+
+```
+
+Because the html is only loaded after the page is loaded, we can mimic this browser behaviour by using a headless browser. Essentially we allow the page to load first and then extract the html.
 
 ```{r}
 
@@ -24,7 +41,7 @@ pjs <- run_phantomjs()
 
 ses <- Session$new(port = pjs$port)
 
-url <- "https://convention2.allacademic.com/one/apsa/apsa23/index.php?cmd=Online+Program+View+Selected+Session+Type+Submissions&selected_session_type_id=11476&program_focus=browse_by_session_type_submissions&PHPSESSID=f61sfq1tti3bp1kl0uk1bg5q80"
+url <- "https://convention2.allacademic.com/one/apsa/apsa23/index.php"
 
 ses$go(url)
 
@@ -35,7 +52,7 @@ ses$takeScreenshot()
 
 ```{r}
 
-timezone <- ses$findElement('')
+timezone <- ses$findElement(xpath = '//*[@id="new_timezone"]/option[318]')
 
 timezone$click()
 
@@ -46,7 +63,7 @@ ses$takeScreenshot()
 
 ```{r}
 
-set_timezone <- ses$findElement("")
+set_timezone <- ses$findElement(xpath='//*[@id="new_timezone_selected"]')
 
 set_timezone$click()
 
@@ -56,7 +73,7 @@ ses$takeScreenshot()
 
 ```{r}
 
-click_sidebar <- ses$findElement('')
+click_sidebar <- ses$findElement(xpath = '//*[@id="online_program1_panel_open_btn"]')
 
 click_sidebar$click()
 
@@ -66,7 +83,7 @@ ses$takeScreenshot()
 
 ```{r}
 
-click_sidebar <- ses$findElement("")
+click_sidebar <- ses$findElement('//*[@id="home"]/div[3]/div[2]/div[1]/div/ul/li[7]/a')
 
 click_sidebar$click()
 
