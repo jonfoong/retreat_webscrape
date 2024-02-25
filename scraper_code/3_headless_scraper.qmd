@@ -73,7 +73,7 @@ ses$takeScreenshot()
 
 ```{r}
 
-click_sidebar <- ses$findElement(xpath = '//*[@id="online_program1_panel_open_btn"]')
+click_sidebar <- ses$findElement(xpath = '//*[@id="left_panel_menu_column"]/ul[1]/li[8]/a')
 
 click_sidebar$click()
 
@@ -83,13 +83,13 @@ ses$takeScreenshot()
 
 ```{r}
 
-click_sidebar <- ses$findElement('//*[@id="home"]/div[3]/div[2]/div[1]/div/ul/li[7]/a')
+click_sidebar <- ses$findElement(xpath = '//*[@id="home"]/div[3]/div[2]/div[1]/div/ul/li[7]/a')
 
 click_sidebar$click()
 
 # this takes awhile so we skip
 
-#ses$takeScreenshot()
+ses$takeScreenshot()
 
 ```
 
@@ -105,7 +105,7 @@ ses$delete()
 
 sessions <- src %>% 
   read_html() %>% 
-  html_elements(xpath = "") %>% 
+  html_elements(xpath = "//a[@class='ul-li-has-alt-left ui-btn ui-btn-icon-right ui-icon-carat-r']") %>% 
   html_text()
 
 head(sessions)
@@ -128,7 +128,17 @@ sessions_df <-
          virtual = ifelse(grepl("Virtual", text), 1, 0)) %>% 
   select(-text) 
 
-# we extract the top 10 sub units
+# view data structure
+
+sessions_df %>% 
+  head() %>% 
+  kable()
+
+```
+
+```{r}
+
+# we extract the top 20 sub units
 
 subunit <- sessions_df %>% 
   group_by(sub_unit) %>% 
