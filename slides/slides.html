@@ -444,7 +444,7 @@
   <meta name="generator" content="quarto-1.3.450">
 
   <meta name="author" content="Jonah Foong">
-  <meta name="dcterms.date" content="2023-09-22">
+  <meta name="dcterms.date" content="2024-02-26">
   <title>IPI webscraping workshop 2024: A quick primer on webscraping in R</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1154,7 +1154,7 @@ Jonah Foong
 </div>
 </div>
 
-  <p class="date">2023-09-22</p>
+  <p class="date">2024-02-26</p>
 </section>
 <section id="overview" class="slide level2">
 <h2>Overview</h2>
@@ -1163,8 +1163,12 @@ Jonah Foong
 <li>Some basics about web pages</li>
 <li>Webscraping ethics</li>
 <li>Scraping HTML and JS hands on</li>
+<li>containerizing and automating our scraper*</li>
 <li>Next steps/concluding thoughts</li>
 </ol>
+<ul>
+<li>If we have time</li>
+</ul>
 </section>
 <section id="what-is-webscraping" class="slide level2">
 <h2>What is webscraping</h2>
@@ -1191,7 +1195,10 @@ Jonah Foong
 </section>
 <section id="how-are-websites-organized" class="slide level2">
 <h2>How are websites organized?</h2>
-<p>Usually organized in 3 ways: 1. Pure HTML (static pages) 2. Javscript content (dynamic pages) 3. Javascript rendered HTML (static pages rendered dynamically!)</p>
+<p>Usually organized in 3 ways:</p>
+<pre><code>1. Pure HTML (static pages)
+2. Javscript content (dynamic pages)
+3. Javascript rendered HTML (static pages rendered dynamically!)</code></pre>
 </section>
 <section id="how-are-websites-organized-1" class="slide level2">
 <h2>How are websites organized?</h2>
@@ -1301,13 +1308,35 @@ Jonah Foong
 <li>The <a href="https://convention2.allacademic.com/one/apsa/apsa23/index.php">APSA website</a> is a good example: we want to know which sessions went virtual</li>
 </ul>
 </section>
+<section id="containerize-and-automate" class="slide level2 smaller">
+<h2>Containerize and automate</h2>
+<ul>
+<li>we don’t want to have to run the script ourselves everytime we want to scrape, we want to let the cloud do this for us</li>
+<li>To do this we need to turn our script into an image: think of this as a set of instructions that tells a computer exactly what it needs to do from scratch to be able to run the script</li>
+<li>We will use google cloud to create a virtual computer that will use this image to run our script</li>
+<li>what comes out of it is a “container”, because everything is self contained</li>
+</ul>
+</section>
+<section id="containerize-and-automate-1" class="slide level2">
+<h2>Containerize and automate</h2>
+<ol type="1">
+<li>create a script and a corresponding Dockerfile</li>
+<li>create Dockerhub repo (public) and build image</li>
+<li>enable GCP APIs</li>
+<li>create virtual machine on cloud</li>
+<li>To schedule it at regular intervals, follow GCP tutorial <a href="https://cloud.google.com/scheduler/docs/start-and-stop-compute-engine-instances-on-a-schedule#console_2">here</a></li>
+</ol>
+</section>
 <section id="next-stepsconcluding-thoughts" class="slide level2">
 <h2>Next steps/concluding thoughts</h2>
 <ul>
-<li>Websites can be organized in tons of other ways, web structures constantly evolving</li>
-<li>Webscraping is specific to use case</li>
-<li>R has poor libraries but enough for most basic uses</li>
-<li>next steps: automate your scraper (<a href="https://jonfoong.github.io/writings/rscrapergcp/">tutorial</a>)</li>
+<li><p>Websites can be organized in tons of other ways, web structures constantly evolving</p></li>
+<li><p>Webscraping is specific to use case</p></li>
+<li><p>R has poor libraries but enough for most basic uses</p>
+<ul>
+<li>Python has a well maintained selenium library</li>
+</ul></li>
+<li><p>next steps: automate your scraper on the cloud (<a href="https://jonfoong.github.io/writings/rscrapergcp/">tutorial</a>)</p></li>
 </ul>
 <div class="footer footer-default">
 

@@ -1,7 +1,7 @@
 ---
 title: "IPI webscraping workshop 2024: A quick primer on webscraping in R"
 author: Jonah Foong
-date: "22 September 2023"
+date: today
 format: 
   revealjs:
     reference-location: document
@@ -20,7 +20,10 @@ editor:
 2. Some basics about web pages
 3. Webscraping ethics
 4. Scraping HTML and JS hands on
-5. Next steps/concluding thoughts
+5. containerizing and automating our scraper*
+6. Next steps/concluding thoughts
+
+* If we have time
 
 ## What is webscraping
 
@@ -44,9 +47,10 @@ Ultimately, pulling information that is **raw and unstructured**, and turning it
 ## How are websites organized?
 
 Usually organized in 3 ways:
-  1. Pure HTML (static pages)
-  2. Javscript content (dynamic pages)
-  3. Javascript rendered HTML (static pages rendered dynamically!)
+
+    1. Pure HTML (static pages)
+    2. Javscript content (dynamic pages)
+    3. Javascript rendered HTML (static pages rendered dynamically!)
 
 ## How are websites organized?
 
@@ -140,6 +144,20 @@ Usually organized in 3 ways:
 - We navigate the website using CSS/xpath selectors, very similar to how we did HTML scraping
 - The [APSA website](https://convention2.allacademic.com/one/apsa/apsa23/index.php) is a good example: we want to know which sessions went virtual
 
+## Containerize and automate {.smaller}
+
+- we don't want to have to run the script ourselves everytime we want to scrape, we want to let the cloud do this for us
+- To do this we need to turn our script into an image: think of this as a set of instructions that tells a computer exactly what it needs to do from scratch to be able to run the script
+- We will use google cloud to create a virtual computer that will use this image to run our script
+- what comes out of it is a "container", because everything is self contained
+
+## Containerize and automate
+
+1. create a script and a corresponding Dockerfile
+2. create Dockerhub repo (public) and build image
+3. enable GCP APIs
+4. create virtual machine on cloud
+5. To schedule it at regular intervals, follow GCP tutorial [here](https://cloud.google.com/scheduler/docs/start-and-stop-compute-engine-instances-on-a-schedule#console_2)
 
 ## Next steps/concluding thoughts
 
